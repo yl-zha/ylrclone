@@ -284,7 +284,7 @@ fn pid_alive(pid: u32) -> bool {
 
     unsafe {
         let handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid);
-        if handle == 0 {
+        if handle.is_null() {
             return false;
         }
         let mut code: u32 = 0;
@@ -303,7 +303,7 @@ fn process_image_name(pid: u32) -> Option<String> {
 
     unsafe {
         let handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid);
-        if handle == 0 {
+        if handle.is_null() {
             return None;
         }
         let mut buffer = [0u16; 1024];

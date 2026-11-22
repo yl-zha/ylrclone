@@ -100,12 +100,12 @@ fn settings_view(app: &AppHandle, state: &AppState) -> Result<SettingsView, Stri
 }
 
 #[tauri::command]
-pub fn get_settings(app: AppHandle, state: State<'_, AppState>) -> Result<SettingsView, String> {
+fn get_settings(app: AppHandle, state: State<'_, AppState>) -> Result<SettingsView, String> {
     settings_view(&app, &state)
 }
 
 #[tauri::command]
-pub fn save_remote(
+fn save_remote(
     app: AppHandle,
     state: State<'_, AppState>,
     input: SaveRemoteInput,
@@ -174,7 +174,7 @@ pub fn save_remote(
 }
 
 #[tauri::command]
-pub fn delete_remote(app: AppHandle, state: State<'_, AppState>, name: String) -> Result<(), String> {
+fn delete_remote(app: AppHandle, state: State<'_, AppState>, name: String) -> Result<(), String> {
     let mut settings = state.settings.lock().clone();
 
     if let Some(spec) = settings.find(&name).cloned() {
@@ -199,7 +199,7 @@ pub fn delete_remote(app: AppHandle, state: State<'_, AppState>, name: String) -
 }
 
 #[tauri::command]
-pub async fn mount_remote(
+async fn mount_remote(
     app: AppHandle,
     state: State<'_, AppState>,
     name: String,
@@ -230,7 +230,7 @@ pub async fn mount_remote(
 }
 
 #[tauri::command]
-pub async fn unmount_remote(
+async fn unmount_remote(
     app: AppHandle,
     state: State<'_, AppState>,
     name: String,
@@ -259,14 +259,14 @@ pub async fn unmount_remote(
 }
 
 #[tauri::command]
-pub fn list_statuses(state: State<'_, AppState>) -> Result<Vec<MountStatus>, String> {
+fn list_statuses(state: State<'_, AppState>) -> Result<Vec<MountStatus>, String> {
     let mut statuses: Vec<MountStatus> = state.statuses.lock().values().cloned().collect();
     statuses.sort_by(|a, b| a.name.cmp(&b.name));
     Ok(statuses)
 }
 
 #[tauri::command]
-pub fn read_log(app: AppHandle, name: String, lines: Option<usize>) -> Result<String, String> {
+fn read_log(app: AppHandle, name: String, lines: Option<usize>) -> Result<String, String> {
     let path = paths::mount_log_path(&app, &name)?;
     let tail = mount::read_log_tail(&path, lines.unwrap_or(200));
     if tail.is_empty() {
@@ -277,7 +277,7 @@ pub fn read_log(app: AppHandle, name: String, lines: Option<usize>) -> Result<St
 }
 
 #[tauri::command]
-pub fn set_autostart(
+fn set_autostart(
     app: AppHandle,
     state: State<'_, AppState>,
     enabled: bool,
@@ -293,7 +293,7 @@ pub fn set_autostart(
 }
 
 #[tauri::command]
-pub fn set_auto_remount(
+fn set_auto_remount(
     app: AppHandle,
     state: State<'_, AppState>,
     enabled: bool,
@@ -307,13 +307,13 @@ pub fn set_auto_remount(
 }
 
 #[tauri::command]
-pub fn open_data_dir(app: AppHandle) -> Result<(), String> {
+fn open_data_dir(app: AppHandle) -> Result<(), String> {
     let dir = paths::data_dir(&app)?;
     open_path_internal(&dir)
 }
 
 #[tauri::command]
-pub fn hide_window(app: AppHandle) -> Result<(), String> {
+fn hide_window(app: AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window("main") {
         window.hide().map_err(|e| format!("隐藏窗口失败：{e}"))?;
     }
